@@ -1,8 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Stopwatch
 {
@@ -14,82 +12,74 @@ namespace Stopwatch
 
         #region Declarations; initialization
 
-        private bool _running;
+        private bool IsRunning { get; set; }
 
-        private readonly ElapsedTime _timeElapsed = new ElapsedTime();
+        private string TimeElapsed {
+            get { return _stopwatch.Elapsed.ToString(_elapsedTimeFormat); }
+        }
+        private string _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
 
-        private Thread _thread;
-        private readonly System.Timers.Timer _timer = new System.Timers.Timer(1D);
+        private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
+        private readonly DispatcherTimer _textBoxTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _longIntervalPassTimer = new DispatcherTimer();
 
         public MainWindow()
         {
             InitializeComponent();
 
-            _timer.Elapsed += Timer_Elapsed;
-            Closing += OnWindowClosing;
+            _textBoxTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            _textBoxTimer.Tick += TextBoxTimer_Tick;
+
+            _longIntervalPassTimer.Interval = new TimeSpan(1, 0, 0, 0, 0);
+            _longIntervalPassTimer.Tick += LongIntervalPassTimer_Tick;
         }
 
         #endregion
 
-        #region Core
+        #region Event handlers
 
-        void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void TextBoxTimer_Tick(object sender, EventArgs e)
         {
-            Dispatcher.Invoke(new Action(() => TextBoxTime.Text = _timeElapsed.ToString()));
+            TextBoxTime.Text = TimeElapsed;
         }
 
-        private void StopwatchThread()
+        private void LongIntervalPassTimer_Tick(object sender, EventArgs e)
         {
-            do
-            {
-                Thread.Sleep(1);
-                _timeElapsed.AddOneMillisecond();
-            } while (_running);
+            _elapsedTimeFormat = @"d\.hh\:mm\:ss\.fff";
         }
-
-        private void RestartStopwatchThread()
-        {
-            _thread = new Thread(StopwatchThread);
-            _thread.Start();
-        }
-
-        #endregion
-
-        #region Buttons
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            var mySender = sender as Button;
-
-            // ReSharper disable PossibleNullReferenceException
-            if (!_running) {
-                _running = true;
-                mySender.Content = "Stop";
-                RestartStopwatchThread();
-                _timer.Start();
+            if (!IsRunning) {
+                _stopwatch.Start();
+                _longIntervalPassTimer.Start();
+                _textBoxTimer.Start();
+                ButtonRestart.Content = "Stop";
+                IsRunning = true;
 
             } else {
-                _running = false;
-                mySender.Content = "Start";
-                _thread.Abort();
-                _timer.Stop();
+                _stopwatch.Stop();
+                _textBoxTimer.Stop();
+                _longIntervalPassTimer.Stop();
+                ButtonRestart.Content = "Start";
+                IsRunning = false;
             }
-            // ReSharper restore PossibleNullReferenceException
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
-            _timeElapsed.Reset();
-            TextBoxTime.Text = "00:00:00.000";
-        }
-
-        private void OnWindowClosing(object sender, CancelEventArgs e)
-        {
-            if (_thread != null) {
-                _thread.Abort();
+            if (IsRunning) {
+                _stopwatch.Restart();
+                _longIntervalPassTimer.Stop();
+                _longIntervalPassTimer.Start();
+            } else {
+                _stopwatch.Reset();
+                _longIntervalPassTimer.Stop();
+                _longIntervalPassTimer.Start();
             }
 
-            _timer.Dispose();
+            _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
+            TextBoxTime.Text = "00:00:00.000";
         }
 
         #endregion
