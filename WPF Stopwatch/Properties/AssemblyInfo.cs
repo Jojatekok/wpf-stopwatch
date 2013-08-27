@@ -11,7 +11,7 @@ using System.Windows;
 [assembly: AssemblyDescription("A simple stopwatch application made in WPF.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Stopwatch")]
+[assembly: AssemblyProduct("WPF Stopwatch")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -51,6 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.2.0")]
-[assembly: AssemblyFileVersion("1.1.2.0")]
+[assembly: AssemblyVersion("1.1.3.0")]
+[assembly: AssemblyFileVersion("1.1.3.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: GuidAttribute("d416049c-0b32-4ce6-9690-af463eac7b18")]

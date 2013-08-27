@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Stopwatch
+namespace WpfStopwatch
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

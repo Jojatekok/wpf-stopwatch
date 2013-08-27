@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stopwatch", "Stopwatch\Stopwatch.csproj", "{D678EB5C-E605-48A0-B1B6-483CFA9DFFBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF Stopwatch", "WPF Stopwatch\WPF Stopwatch.csproj", "{D678EB5C-E605-48A0-B1B6-483CFA9DFFBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
