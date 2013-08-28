@@ -2,24 +2,28 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Stopwatch"
-        Width="216" Height="140">
-    <Viewbox Stretch="Uniform" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        Width="217" Height="139" WindowStartupLocation="CenterScreen">
+    <Viewbox Stretch="Uniform">
         <Grid Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            
-            <TextBox x:Name="TextBoxTime" Text="00:00:00.000" FontSize="30" Margin="0,0,0,10" TabIndex="0"
-                     Cursor="Arrow" AllowDrop="False" UndoLimit="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
-                     VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.ColumnSpan="2">
+
+            <TextBox x:Name="TextBoxTime" Text="00:00:00.000" FontSize="30" IsReadOnly="True" TabIndex="0" Cursor="Arrow"
+                     AllowDrop="False" IsUndoEnabled="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                     MouseEnter="TextBoxTime_MouseEnter" MouseLeave="TextBoxTime_MouseLeave" SelectionChanged="TextBoxTime_OnSelectionChanged">
             </TextBox>
-            <Button x:Name="ButtonRestart" Content="Start" Grid.Row="1" Click="StartButton_Click" TabIndex="1" Margin="0,0,5,0"/>
-            <Button x:Name="ButtonReset" Content="Reset" Grid.Row="1" Grid.Column="1" Click="ResetButton_Click" TabIndex="2" Margin="5,0,0,0"/>
+
+            <Grid Grid.Row="1" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="ButtonStartStop" Content="Start" Click="StartStopButton_Click" TabIndex="1" Margin="0,0,5,0"/>
+                <Button x:Name="ButtonReset" Content="Clear" Grid.Column="1" Click="ResetButton_Click" TabIndex="2" IsEnabled="False" Margin="5,0,0,0"/>
+            </Grid>
         </Grid>
     </Viewbox>
 </Window>

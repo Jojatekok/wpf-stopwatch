@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace WpfStopwatch
@@ -14,8 +16,9 @@ namespace WpfStopwatch
 
         private bool IsRunning { get; set; }
 
+        private static readonly CultureInfo InvariantCulture = CultureInfo.InvariantCulture;
         private string TimeElapsed {
-            get { return _stopwatch.Elapsed.ToString(_elapsedTimeFormat); }
+            get { return _stopwatch.Elapsed.ToString(_elapsedTimeFormat, InvariantCulture); }
         }
         private string _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
 
@@ -48,22 +51,31 @@ namespace WpfStopwatch
             _elapsedTimeFormat = @"d\.hh\:mm\:ss\.fff";
         }
 
-        private void StartButton_Click(object sender, RoutedEventArgs e)
+        private void StartStopButton_Click(object sender, RoutedEventArgs e)
         {
             if (!IsRunning) {
                 _stopwatch.Start();
                 _longIntervalPassTimer.Start();
                 _textBoxTimer.Start();
-                ButtonRestart.Content = "Stop";
+
+                ButtonStartStop.Content = "Stop";
+                ButtonReset.Content = "Restart";
+                ButtonReset.IsEnabled = true;
+                TextBoxTime.IsTabStop = false;
                 IsRunning = true;
 
             } else {
                 _stopwatch.Stop();
                 _textBoxTimer.Stop();
                 _longIntervalPassTimer.Stop();
-                ButtonRestart.Content = "Start";
+
+                ButtonStartStop.Content = "Start";
+                ButtonReset.Content = "Clear";
+                TextBoxTime.IsTabStop = true;
                 IsRunning = false;
             }
+
+            Keyboard.ClearFocus();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -72,6 +84,7 @@ namespace WpfStopwatch
                 _stopwatch.Restart();
                 _longIntervalPassTimer.Stop();
                 _longIntervalPassTimer.Start();
+
             } else {
                 _stopwatch.Reset();
                 _longIntervalPassTimer.Stop();
@@ -80,9 +93,35 @@ namespace WpfStopwatch
 
             _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
             TextBoxTime.Text = "00:00:00.000";
+
+            Keyboard.ClearFocus();
+            if (!IsRunning) {
+                ButtonReset.IsEnabled = false;
+            }
+        }
+
+        private void TextBoxTime_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (IsRunning) return;
+
+            TextBoxTime.Focus();
+            if (TextBoxTime.SelectionLength != 0) return;
+            TextBoxTime.SelectAll();
+        }
+
+        private void TextBoxTime_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (IsRunning) return;
+            Keyboard.ClearFocus();
         }
 
         #endregion
 
+        private void TextBoxTime_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (IsRunning && TextBoxTime.SelectionLength != 0) {
+                TextBoxTime.Select(0, 0);
+            }
+        }
     }
 }
