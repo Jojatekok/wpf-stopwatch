@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -22,6 +23,8 @@ namespace WpfStopwatch
         }
         private string _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
 
+        private uint _lapNumber = 1;
+
         private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
         private readonly DispatcherTimer _textBoxTimer = new DispatcherTimer();
         private readonly DispatcherTimer _longIntervalPassTimer = new DispatcherTimer();
@@ -35,6 +38,9 @@ namespace WpfStopwatch
 
             _longIntervalPassTimer.Interval = new TimeSpan(1, 0, 0, 0, 0);
             _longIntervalPassTimer.Tick += LongIntervalPassTimer_Tick;
+
+            DataGridLapIdColumn.Binding = new Binding("Id");
+            DataGridLapTimeIntervalColumn.Binding = new Binding("TimeInterval");
         }
 
         #endregion
@@ -59,7 +65,7 @@ namespace WpfStopwatch
                 _textBoxTimer.Start();
 
                 ButtonStartStop.Content = "Stop";
-                ButtonReset.Content = "Restart";
+                ButtonReset.Content = "Lap";
                 ButtonReset.IsEnabled = true;
                 TextBoxTime.IsTabStop = false;
                 IsRunning = true;
@@ -81,6 +87,9 @@ namespace WpfStopwatch
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             if (IsRunning) {
+                DataGridLapTimes.Items.Insert(0, new Lap(_lapNumber, TimeElapsed));
+                _lapNumber += 1U;
+
                 _stopwatch.Restart();
                 _longIntervalPassTimer.Stop();
                 _longIntervalPassTimer.Start();
@@ -88,16 +97,16 @@ namespace WpfStopwatch
             } else {
                 _stopwatch.Reset();
                 _longIntervalPassTimer.Stop();
-                _longIntervalPassTimer.Start();
+
+                Keyboard.ClearFocus();
+                ButtonReset.IsEnabled = false;
+
+                DataGridLapTimes.Items.Clear();
+                _lapNumber = 1;
             }
 
             _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
             TextBoxTime.Text = "00:00:00.000";
-
-            Keyboard.ClearFocus();
-            if (!IsRunning) {
-                ButtonReset.IsEnabled = false;
-            }
         }
 
         private void TextBoxTime_MouseEnter(object sender, MouseEventArgs e)
