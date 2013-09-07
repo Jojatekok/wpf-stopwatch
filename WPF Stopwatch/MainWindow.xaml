@@ -15,7 +15,7 @@
             <TextBox x:Name="TextBoxTime" Text="00:00:00.000" FontSize="30" IsReadOnly="True" TabIndex="0" Cursor="Arrow"
                      AllowDrop="False" IsUndoEnabled="False" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                      MouseEnter="TextBoxTime_MouseEnter" MouseLeave="TextBoxTime_MouseLeave" SelectionChanged="TextBoxTime_OnSelectionChanged"
-                     Margin="0,0,0,5"/>
+                     Margin="0,0,0,5" MouseDoubleClick="TextBoxTime_MouseDoubleClick"/>
         </Viewbox>
 
         <Grid Grid.Row="1" Margin="0,5,0,5">
