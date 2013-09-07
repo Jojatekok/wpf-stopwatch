@@ -7,9 +7,6 @@ using System.Windows.Threading;
 
 namespace WpfStopwatch
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
 
@@ -131,7 +128,7 @@ namespace WpfStopwatch
         {
             DisplayTotalTime = !DisplayTotalTime;
 
-            var timeElapsed = !DisplayTotalTime ? _stopwatch.Elapsed : TotalTimeElapsed;
+            var timeElapsed = DisplayTotalTime ? TotalTimeElapsed : _stopwatch.Elapsed;
             var oneDay = new TimeSpan(1, 0, 0, 0, 0);
 
             if (timeElapsed < oneDay) {
@@ -180,5 +177,6 @@ namespace WpfStopwatch
         }
 
         #endregion
+
     }
 }
