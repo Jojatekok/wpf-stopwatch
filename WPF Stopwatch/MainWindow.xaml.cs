@@ -93,11 +93,13 @@ namespace WpfStopwatch
         {
             if (IsRunning) { // Lap
                 var timeElapsed = _stopwatch.Elapsed;
+                _stopwatch.Restart();
+
                 _previousLapsTimeElapsed = _previousLapsTimeElapsed.Add(timeElapsed);
                 DataGridLapTimes.Items.Insert(0, new Lap(_lapNumber, TimeSpanToString(timeElapsed)));
                 _lapNumber += 1U;
 
-                _stopwatch.Restart();
+                DataGridLapTimes.Items.Refresh();
 
                 if (!DisplayTotalTime) {
                     _longIntervalPassTimer.Stop();
@@ -122,6 +124,19 @@ namespace WpfStopwatch
                 _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
                 TextBoxTime.Text = "00:00:00.000";
             }
+        }
+
+        private void ButtonStartStop_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ButtonStartStop.FontSize = Math.Min((e.NewSize.Height - 4D) / 1.5,
+                                                (e.NewSize.Width - 10D) / 3);
+            ButtonReset.FontSize = ButtonStartStop.FontSize;
+        }
+
+        private void TextBoxTime_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            TextBoxTime.FontSize = Math.Min((e.NewSize.Height - 2D) / 1.5,
+                                            (e.NewSize.Width - 10D) / 5.5);
         }
 
         private void TextBoxTime_MouseDoubleClick(object sender, MouseButtonEventArgs e)
