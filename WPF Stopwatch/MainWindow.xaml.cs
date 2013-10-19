@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -14,6 +14,10 @@ namespace WpfStopwatch
 
         private bool IsRunning { get; set; }
         private bool DisplayTotalTime { get; set; }
+
+        private uint CurrentLapNumber { get; set; }
+
+        private ObservableCollection<Lap> LapTimesCollection { get; set; }
 
         private TimeSpan _previousLapsTimeElapsed;
         private TimeSpan TotalTimeElapsed {
@@ -28,8 +32,6 @@ namespace WpfStopwatch
         }
         private string _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
 
-        private uint _lapNumber = 1;
-
         private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
         private readonly DispatcherTimer _textBoxTimer = new DispatcherTimer();
         private readonly DispatcherTimer _longIntervalPassTimer = new DispatcherTimer();
@@ -38,14 +40,15 @@ namespace WpfStopwatch
         {
             InitializeComponent();
 
+            CurrentLapNumber = 1;
+            LapTimesCollection = new ObservableCollection<Lap>();
+            DataGridLapTimes.ItemsSource = LapTimesCollection;
+
             _textBoxTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
             _textBoxTimer.Tick += TextBoxTimer_Tick;
 
             _longIntervalPassTimer.Interval = new TimeSpan(1, 0, 0, 0, 0);
             _longIntervalPassTimer.Tick += LongIntervalPassTimer_Tick;
-
-            DataGridLapIdColumn.Binding = new Binding("Id");
-            DataGridLapTimeIntervalColumn.Binding = new Binding("TimeInterval");
         }
 
         #endregion
@@ -96,10 +99,8 @@ namespace WpfStopwatch
                 _stopwatch.Restart();
 
                 _previousLapsTimeElapsed = _previousLapsTimeElapsed.Add(timeElapsed);
-                DataGridLapTimes.Items.Insert(0, new Lap(_lapNumber, TimeSpanToString(timeElapsed)));
-                _lapNumber += 1U;
-
-                DataGridLapTimes.Items.Refresh();
+                LapTimesCollection.Insert(0, new Lap(CurrentLapNumber, TimeSpanToString(timeElapsed)));
+                CurrentLapNumber += 1U;
 
                 if (!DisplayTotalTime) {
                     _longIntervalPassTimer.Stop();
@@ -117,9 +118,9 @@ namespace WpfStopwatch
                 Keyboard.ClearFocus();
                 ButtonReset.IsEnabled = false;
 
-                DataGridLapTimes.Items.Clear();
+                LapTimesCollection.Clear();
                 _previousLapsTimeElapsed = default(TimeSpan);
-                _lapNumber = 1;
+                CurrentLapNumber = 1;
 
                 _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
                 TextBoxTime.Text = "00:00:00.000";

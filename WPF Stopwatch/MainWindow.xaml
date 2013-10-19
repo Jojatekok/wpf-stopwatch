@@ -26,11 +26,11 @@
             <Button x:Name="ButtonReset" Content="Clear" Grid.Column="1" Click="ResetButton_Click" IsEnabled="False" Margin="4,0,0,0"/>
         </Grid>
 
-        <DataGrid x:Name="DataGridLapTimes" Grid.Row="2" IsReadOnly="True" HeadersVisibility="Column"
+        <DataGrid x:Name="DataGridLapTimes" Grid.Row="2" IsReadOnly="True" AutoGenerateColumns="False" HeadersVisibility="Column"
                   VerticalGridLinesBrush="#26000000" HorizontalGridLinesBrush="#26000000" Margin="0,5,0,0">
             <DataGrid.Columns>
-                <DataGridTextColumn x:Name="DataGridLapIdColumn" Header="Lap #" MinWidth="40" SortDirection="Descending"/>
-                <DataGridTextColumn x:Name="DataGridLapTimeIntervalColumn" Header="Time" MinWidth="71" Width="*"/>
+                <DataGridTextColumn Header="Lap #" Binding="{Binding Id}" MinWidth="40" SortDirection="Descending"/>
+                <DataGridTextColumn Header="Time" Binding="{Binding TimeInterval}" MinWidth="71" Width="*"/>
             </DataGrid.Columns>
 
             <DataGrid.CellStyle>
