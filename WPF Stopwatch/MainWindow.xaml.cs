@@ -7,30 +7,30 @@ using System.Windows.Threading;
 
 namespace WpfStopwatch
 {
-    public partial class MainWindow
+    partial class MainWindow
     {
 
         #region Declarations; initialization
+        
+        bool IsRunning { get; set; }
+        bool DisplayTotalTime { get; set; }
 
-        private bool IsRunning { get; set; }
-        private bool DisplayTotalTime { get; set; }
+        uint CurrentLapNumber { get; set; }
 
-        private uint CurrentLapNumber { get; set; }
-
-        private ObservableCollection<Lap> LapTimesCollection { get; set; }
+        ObservableCollection<Lap> LapTimesCollection { get; set; }
 
         private TimeSpan _previousLapsTimeElapsed;
-        private TimeSpan TotalTimeElapsed {
+        TimeSpan TotalTimeElapsed {
             get { return _previousLapsTimeElapsed.Add(_stopwatch.Elapsed); }
         }
 
-        private string ElapsedTimeString
+        string ElapsedTimeString
         {
             get { return TimeSpanToString(DisplayTotalTime ?
                                           TotalTimeElapsed :
                                           _stopwatch.Elapsed); }
         }
-        private string _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
+        private string _elapsedTimeFormat = TimeFormats.Default;
 
         private readonly System.Diagnostics.Stopwatch _stopwatch = new System.Diagnostics.Stopwatch();
         private readonly DispatcherTimer _textBoxTimer = new DispatcherTimer();
@@ -62,7 +62,7 @@ namespace WpfStopwatch
 
         private void LongIntervalPassTimer_Tick(object sender, EventArgs e)
         {
-            _elapsedTimeFormat = @"d\.hh\:mm\:ss\.fff";
+            _elapsedTimeFormat = TimeFormats.Long;
         }
 
         private void StartStopButton_Click(object sender, RoutedEventArgs e)
@@ -106,7 +106,7 @@ namespace WpfStopwatch
                     _longIntervalPassTimer.Stop();
                     _longIntervalPassTimer.Start();
 
-                    _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
+                    _elapsedTimeFormat = TimeFormats.Default;
                     TextBoxTime.Text = "00:00:00.000";
                 }
 
@@ -122,7 +122,7 @@ namespace WpfStopwatch
                 _previousLapsTimeElapsed = default(TimeSpan);
                 CurrentLapNumber = 1;
 
-                _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
+                _elapsedTimeFormat = TimeFormats.Default;
                 TextBoxTime.Text = "00:00:00.000";
             }
         }
@@ -148,10 +148,10 @@ namespace WpfStopwatch
             var oneDay = new TimeSpan(1, 0, 0, 0, 0);
 
             if (timeElapsed < oneDay) {
-                _elapsedTimeFormat = @"hh\:mm\:ss\.fff";
+                _elapsedTimeFormat = TimeFormats.Default;
                 _longIntervalPassTimer.Interval = oneDay.Subtract(timeElapsed);
             } else {
-                _elapsedTimeFormat = @"d\.hh\:mm\:ss\.fff";
+                _elapsedTimeFormat = TimeFormats.Long;
             }
 
             if (!IsRunning) {
